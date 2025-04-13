@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS3 - XMB Clone Test</title>
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: brightness(0.5);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+}
+
+.status-bar {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(51, 51, 51, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 350px;
+    font-size: 14px;
+}
+
+.message-icon {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background-image: url('messages.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.message-badge {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: red;
+    color: white;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    font-size: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clock {
+    display: flex;
+    align-items: center;
+}
+
+.clock-icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('clock.png');
+    background-size: cover;
+    background-position: center;
+    margin-right: 8px;
+}
+
+#time {
+    font-size: 14px;
+}
+
+.xmb-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 60px);
+    flex-direction: row;
+    gap: 40px;
+    overflow: hidden;
+    position: relative;
+    padding-top: 60px;
+}
+
+.category {
+    text-align: center;
+    position: relative;
+    width: 200px;
+}
+
+.category h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.icon {
+    background-color: transparent;
+    border-radius: 15px;
+    padding: 16px;
+    margin: 8px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s, background-color 0.3s, border 0.3s;
+    cursor: pointer;
+}
+
+.icon:hover {
+    background-color: rgba(30, 144, 255, 0.5);
+    transform: scale(1.1);
+}
+
+.icon.focused {
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+    border: 3px solid #1e90ff;
+    box-sizing: border-box;
+}
+
+.icon img {
+    width: 28px;
+    height: 28px;
+}
+
+.icon span {
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+.category.focused {
+    border: none;
+    padding: 8px;
+}
+
+</style>
+
+</head>
+<body>
+    
+    <video autoplay muted loop class="video-background">
+    <source src="background.mp4" type="video/mp4">
+    <img src="wallpaper.webp" alt="Video background">
+</video>
+
+
+    <div class="status-bar">
+
+        <div class="message-icon">
+            <div class="message-badge" id="message-badge">2</div>
+        </div>
+        
+        <div class="clock">
+            <div class="clock-icon"></div>
+            <span id="time"></span>
+        </div>
+    </div>
+
+    <div class="xmb-container">
+        <div class="category" id="user">
+            <h3>User</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="create.png" alt="#">
+                    <span>Create profile</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="power.png" alt="#">
+                    <span>Power off</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="restart.png" alt="#">
+                    <span>Restart</span>
+                </div>
+            </div>
+        </div>
+        
+                <div class="category" id="settings">
+            <h3>Settings</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="update.png" alt="#">
+                    <span>System update</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="info.png" alt="#">
+                    <span>System information</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="debug.png" alt="#">
+                    <span>Debug settings</span>
+                </div>
+            </div>
+        </div>
+        
+                <div class="category" id="video">
+            <h3>Video</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="netflix.png" alt="#">
+                    <span>Netflix</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="youtube.png" alt="#">
+                    <span>YouTube</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="playlist.png" alt="#">
+                    <span>Playlists</span>
+                </div>
+            </div>
+        </div>
+        
+                <div class="category" id="image">
+            <h3>Image</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="gallery.png" alt="#">
+                    <span>Photo gallery</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="playlist.png" alt="#">
+                    <span>Playlists</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="slideshow.png" alt="#">
+                    <span>Slideshow</span>
+                </div>
+            </div>
+        </div>
+        
+                <div class="category" id="audio">
+            <h3>Audio</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="spotify.png" alt="#">
+                    <span>Spotify</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="playlist.png" alt="#">
+                    <span>Playlists</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="visual.png" alt="#">
+                    <span>Audio visualiser</span>
+                </div>
+            </div>
+        </div>
+        
+                <div class="category" id="game">
+            <h3>Game</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="folder.png" alt="#">
+                    <span>Game data utility</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="debug.png" alt="#">
+                    <span>app_home</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="debug.png" alt="#">
+                    <span>Install package files</span>
+                </div>
+            </div>
+        </div>
+        
+                <div class="category" id="network">
+            <h3>Network</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="remote.png" alt="#">
+                    <span>Remote Play</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="globe.png" alt="#">
+                    <span>Internet Browser</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="search.png" alt="#">
+                    <span>Internet Search</span>
+                </div>
+            </div>
+        </div>
+        
+                <div class="category" id="psn">
+            <h3>PSN</h3>
+            <div class="icons">
+                <div class="icon" data-name="#">
+                    <img src="sign-in.png" alt="#">
+                    <span>Sign-in</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="user.png" alt="#">
+                    <span>Profile</span>
+                </div>
+                <div class="icon" data-name="#">
+                    <img src="inbox.png" alt="#">
+                    <span>Messages</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        function updateTime() {
+            const timeElement = document.getElementById('time');
+            const currentTime = new Date();
+            let hours = currentTime.getHours();
+            let minutes = currentTime.getMinutes();
+            let period = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12 || 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+            timeElement.textContent = `${hours}:${minutes} ${period}`;
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        let currentCategoryIndex = 0;
+        let currentTileIndex = 0;
+        let lastFocusedTile = null;
+
+        const categories = document.querySelectorAll('.category');
+        const icons = document.querySelectorAll('.icon');
+
+        function focusTile(categoryIndex, tileIndex) {
+            const category = categories[categoryIndex];
+            const tile = category.querySelectorAll('.icon')[tileIndex];
+
+            if (lastFocusedTile) {
+                lastFocusedTile.classList.remove('focused');
+            }
+
+            tile.classList.add('focused');
+            lastFocusedTile = tile;
+        }
+
+        function handleCategoryNavigation(event) {
+            if (event.key === 'ArrowLeft') {
+                currentCategoryIndex = Math.max(0, currentCategoryIndex - 1);
+            } else if (event.key === 'ArrowRight') {
+                currentCategoryIndex = Math.min(categories.length - 1, currentCategoryIndex + 1);
+            }
+            focusTile(currentCategoryIndex, currentTileIndex);
+        }
+
+        function handleTileNavigation(event) {
+            const category = categories[currentCategoryIndex];
+            const categoryTiles = category.querySelectorAll('.icon');
+            const maxTileIndex = categoryTiles.length - 1;
+
+            if (event.key === 'ArrowUp') {
+                currentTileIndex = Math.max(0, currentTileIndex - 1);
+            } else if (event.key === 'ArrowDown') {
+                currentTileIndex = Math.min(maxTileIndex, currentTileIndex + 1);
+            }
+
+            focusTile(currentCategoryIndex, currentTileIndex);
+        }
+
+        document.addEventListener('keydown', function(event) {
+            handleCategoryNavigation(event);
+            handleTileNavigation(event);
+        });
+
+        focusTile(currentCategoryIndex, currentTileIndex);
+    </script>
+</body>
+</html>
